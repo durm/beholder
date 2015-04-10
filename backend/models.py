@@ -34,4 +34,6 @@ class Log(Base):
             <result_desc>{9}</result_desc>
             <timestamp>{10}</timestamp>
         </log>
-        """.format(str(self.id), self.host, self.event, self.event_desc, self.obj, self.obj_desc, self.subj, self.subj_desc, self.result, self.result_desc, str(self.timestamp.isoformat()))
+        """.format(str(self.id), self.host, self.event, self.event_desc, 
+        self.obj, self.obj_desc, self.subj, self.subj_desc, self.result, 
+        self.result_desc, str(self.timestamp.isoformat()))

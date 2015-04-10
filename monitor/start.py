@@ -60,6 +60,28 @@ def logs_xml():
     
     return Response(body, mimetype="text/xml")
     
+@app.route("/logs.html")
+def logs_html():
+
+    size = int(request.args.get("size", DEFAULTSIZE))
+    size = size if size <= MAXSIZE else MAXSIZE
+    
+    start = int(request.args.get("start", DEFAULTSTART))
+    
+    finish = start + size
+    
+    s = dbsession()
+    
+    items = s.query(Log)    
+    items = filter_items(items, request.args)
+    items = items[start:finish]
+    
+    body = render_template("logs.html", logs=items)
+    
+    s.close()
+    
+    return Response(body, mimetype="text/html")
+    
 if __name__ == "__main__":
     app.debug = True
     app.run()

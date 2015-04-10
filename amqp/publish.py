@@ -3,7 +3,8 @@
 import pika
 import sys
 
-parameters = pika.URLParameters('amqp://fenomenlog:fenomenlogpass9@localhost:5672/fenomenlog')
+parameters = pika.URLParameters("amqp://fenomenlog:fenomenlogpass9@"
+                                "localhost:5672/fenomenlog")
 
 connection = pika.BlockingConnection(parameters)
 

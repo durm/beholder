@@ -352,7 +352,9 @@ class LogConsumer(object):
 
 def main():
     logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
-    example = LogConsumer('amqp://fenomenlog:fenomenlogpass9@localhost:5672/fenomenlog')
+    example = LogConsumer("amqp://fenomenlog:fenomenlogpass9@"
+                            "localhost:5672"
+                            "/fenomenlog")
     try:
         example.run()
     except KeyboardInterrupt:
