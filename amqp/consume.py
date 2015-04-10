@@ -248,14 +248,17 @@ class LogConsumer(object):
         """
         LOGGER.info('Received message # %s from %s: %s',
                     basic_deliver.delivery_tag, properties.app_id, body)
-                    
-        body = json.loads(body)
-        l = Log(**body)
         
-        self._db_session.add(l)
-        self._db_session.commit()
-                    
-        self.acknowledge_message(basic_deliver.delivery_tag)
+        try:
+            body = json.loads(body)
+            l = Log(**body)
+            
+            self._db_session.add(l)
+            self._db_session.commit()
+        except Exception as e :
+            pass
+        finally:        
+            self.acknowledge_message(basic_deliver.delivery_tag)
 
     def on_cancelok(self, unused_frame):
         """This method is invoked by pika when RabbitMQ acknowledges the
