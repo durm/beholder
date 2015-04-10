@@ -2,6 +2,9 @@
 
 import logging
 import pika
+import json
+from beholder.backend.engine import session as dbsession
+from beholder.backend.models import Log
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
@@ -37,6 +40,7 @@ class LogConsumer(object):
         self._closing = False
         self._consumer_tag = None
         self._url = amqp_url
+        self._db_session = dbsession()
 
     def connect(self):
         """This method connects to RabbitMQ, returning the connection handle.
@@ -244,6 +248,13 @@ class LogConsumer(object):
         """
         LOGGER.info('Received message # %s from %s: %s',
                     basic_deliver.delivery_tag, properties.app_id, body)
+                    
+        body = json.loads(body)
+        l = Log(**body)
+        
+        self._db_session.add(l)
+        self._db_session.commit()
+                    
         self.acknowledge_message(basic_deliver.delivery_tag)
 
     def on_cancelok(self, unused_frame):
