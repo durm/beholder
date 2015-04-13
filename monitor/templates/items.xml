@@ -1,0 +1,24 @@
+<items start="{{ start }}" size="{{ size }}" count="{{ items_count }}">
+{% for item in items %}
+    <item id="{{ item.id }}">
+        <host>{{ item.host }}</host>
+        <event>{{ item.event }}</event>
+        {% if item.event_desc %}
+            <event_desc>{{ item.event_desc }}</event_desc>
+        {% endif %}
+        <obj>{{ item.obj }}</obj>
+        {% if item.obj_desc %}
+            <obj_desc>{{ item.obj_desc }}</obj_desc>
+        {% endif %}
+        <subj>{{ item.subj }}</subj>
+        {% if item.subj_desc %}
+            <subj_desc>{{ item.subj_desc }}</subj_desc>
+        {% endif %}
+        <result>{{ item.result }}</result>
+        {% if item.result_desc %}
+            <result_desc>{{ item.result_desc }}</result_desc>
+        {% endif %}
+        <timestamp>{{ item.timestamp|format_datetime("iso") }}</timestamp>
+    </item>
+{% endfor %}
+</items>

@@ -17,6 +17,15 @@ LOGPARAMS = {
     "lte": ("timestamp_to",)
 }
 
+def format_datetime(value, format='ru'):
+    if format == 'ru':
+        format="%d.%m.%Y %H:%M:%S"
+    elif format == 'iso':
+        format="%Y.%m.%dT%H:%M:%S"
+    return value.strftime(format)
+
+app.jinja_env.filters['format_datetime'] = format_datetime
+
 def datetime_from_iso(sdt):
     return datetime.strptime(sdt, "%Y-%m-%dT%H:%M:%S")   
     
@@ -24,21 +33,23 @@ def filter_items(items, args):
     for k, params in LOGPARAMS.items() :
         for param in params :
             if param in args :
-                if k == "eq" :
-                    items = items.filter(getattr(Log, param) == args[param])
-                elif k == "contains" :
-                    items = items.filter(getattr(Log, param).contains(args[param]))
-                elif k == "gte" and param.endswith("_from") :
-                    p = param.split("_from")[0]
-                    items = items.filter(getattr(Log, p) >= datetime_from_iso(args[param]))
-                elif k == "lte" and param.endswith("_to") :
-                    p = param.split("_to")[0]
-                    items = items.filter(getattr(Log, p) <= datetime_from_iso(args[param]))
-                else:
-                    pass
+                value = args[param]
+                if value :
+                    if k == "eq" :
+                        items = items.filter(getattr(Log, param) == value)
+                    elif k == "contains" :
+                        items = items.filter(getattr(Log, param).contains(value))
+                    elif k == "gte" and param.endswith("_from") :
+                        p = param.split("_from")[0]
+                        items = items.filter(getattr(Log, p) >= datetime_from_iso(value))
+                    elif k == "lte" and param.endswith("_to") :
+                        p = param.split("_to")[0]
+                        items = items.filter(getattr(Log, p) <= datetime_from_iso(value))
+                    else:
+                        pass
     return items
 
-@app.route("/logs.xml")
+@app.route("/items.xml")
 def logs_xml():
 
     size = int(request.args.get("size", DEFAULTSIZE))
@@ -52,15 +63,18 @@ def logs_xml():
     
     items = s.query(Log)    
     items = filter_items(items, request.args)
+    items_count = items.count()
     items = items[start:finish]
     
-    body = """<logs start="{0}" size="{1}">{2}</logs>""".format(str(start), str(size), "".join(map(repr, items)))
+    # body = """<logs start="{0}" size="{1}" count="{2}">{3}</logs>""".format(str(start), str(size), str(items_count), "".join(map(repr, items)))
+    body = render_template("items.xml", items=items, items_count=items_count, start=start, size=size)
     
     s.close()
     
     return Response(body, mimetype="text/xml")
-    
-@app.route("/logs.html")
+
+@app.route("/")    
+@app.route("/items.html")
 def logs_html():
 
     size = int(request.args.get("size", DEFAULTSIZE))
@@ -74,9 +88,12 @@ def logs_html():
     
     items = s.query(Log)    
     items = filter_items(items, request.args)
+    items_count = items.count()
     items = items[start:finish]
     
-    body = render_template("logs.html", logs=items)
+    events = s.query(Log.event).distinct()
+    
+    body = render_template("items.html", items=items, items_count=items_count, events=events)
     
     s.close()
     

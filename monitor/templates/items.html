@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Quickstart your next web project with these example layouts."/>
+
+    <title>Beholder</title>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css"/>
+
+    <style>
+        * {
+            font-family: Arial;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <form class="pure-form" style="padding: 0 10px;">
+        <fieldset>
+            <legend>Поиск</legend>
+            <input type="text" placeholder="Субъект" name="subj"/>
+            <select  placeholder="Событие" name="event">
+                <option value="">--СОБЫТИЕ--</option>
+                {% for event in events %}
+                    <option value="{{ event.0 }}">{{ event.0 }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" placeholder="Объект" name="obj"/>
+            <input type="text" placeholder="Результат" name="result"/>
+            <button type="submit" class="pure-button pure-button-primary">Найти</button>
+        </fieldset>
+    </form>
+    <p>Найдено: {{ items_count }}</p>
+    <table class="pure-table" style="width: 100%;">
+        <thead>
+            <tr>
+                <th style="width: 4%;">#</th>
+                <th style="width: 24%;">Субъект</th>
+                <th style="width: 24%;">Событие</th>
+                <th style="width: 24%;">Объект</th>
+                <th style="width: 24%;">Результат</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr class="{{ loop.cycle('pure-table-odd', '') }}">
+                <td>{{ item.id }}</td>
+                <td>
+                    #{{ item.subj }}
+                    {% if item.subj_desc %}
+                        <br/>
+                        <i>{{ item.subj_desc }}</i>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ item.event }}
+                    {% if item.event_desc %}
+                        <br/>
+                        <i>{{ item.event_desc }}</i>
+                    {% endif %}
+                </td>
+                <td>
+                    #{{ item.obj }}
+                    {% if item.obj_desc %}
+                        <br/>
+                        <i>{{ item.obj_desc}}</i>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ item.event }}, {{ item.timestamp|format_datetime }}
+                    {% if item.event_desc %}
+                        <br/>
+                        <i>{{ item.event_desc }}</i>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
