@@ -12,14 +12,14 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway:200"/>
 </head>
 <body>
-    <table class="pure-table">
+    <table class="pure-table" style="width: 100%;">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Событие</th>
-                <th>Объект</th>
-                <th>Субъект</th>
-                <th>Результат</th>
+                <th style="width: 4%;">#</th>
+                <th style="width: 24%;">Субъект</th>
+                <th style="width: 24%;">Событие</th>
+                <th style="width: 24%;">Объект</th>
+                <th style="width: 24%;">Результат</th>
             </tr>
         </thead>
         <tbody>
@@ -27,16 +27,16 @@
             <tr>
                 <td>{{ log.id }}</td>
                 <td>
+                    #{{ log.subj }}<br/>
+                    <i>{{ log.subj_desc }}</i>
+                </td>
+                <td>
                     {{ log.event }}<br/>
                     <i>{{ log.event_desc }}</i>
                 </td>
                 <td>
                     #{{ log.obj }}<br/>
                     <i>{{ log.obj_desc}}</i>
-                </td>
-                <td>
-                    #{{ log.subj }}<br/>
-                    <i>{{ log.subj_desc }}</i>
                 </td>
                 <td>
                     {{ log.event }}, {{ log.timestamp }}<br/>
